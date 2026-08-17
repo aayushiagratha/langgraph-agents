@@ -1,5 +1,7 @@
 # Brand Voice Guardian
 
+[![CI](https://github.com/aayushiagratha/langgraph-agents/actions/workflows/ci.yml/badge.svg)](https://github.com/aayushiagratha/langgraph-agents/actions/workflows/ci.yml)
+
 A LangGraph port of an n8n agent workflow: give it your brand voice guidelines and a piece of content, and it returns a compliance audit and an on-brand rewrite in one call.
 
 The original runs as an [n8n workflow](https://github.com/aayushiagratha/positionpilot). This is the same pipeline rebuilt as a FastAPI service, as the first step of moving the agents off n8n.
@@ -99,6 +101,23 @@ Both agents use `deepseek/deepseek-v4-flash` through OpenRouter in JSON mode, wi
 Each agent validates its own output before returning — the audit must produce a numeric `compliance_score`, the rewrite must produce non-empty `rewritten_content`. A malformed response fails the request rather than persisting junk.
 
 No credentials are committed. Everything sensitive is read from the environment.
+
+## Testing
+
+```bash
+pip install -r requirements.txt pytest
+pytest tests/ -v
+```
+
+28 tests, all offline — no real OpenRouter, Postgres, or network calls. Covers
+API-key auth, the Postgres connection wrapper, `call_json_agent` (HTTP status
+handling, malformed responses, invalid JSON, the `Bearer` prefix strip),
+prompt building, both graph nodes and their schema validation, the parallel
+`run_brand_voice_check` merge, `persist_results`' SQL parameters, and every
+`/brand-voice-check` response path (auth, validation, success, upstream
+failure, unexpected failure) through FastAPI's `TestClient`. Runs on push/PR
+via GitHub Actions against Python 3.11 and 3.12 — see
+`.github/workflows/ci.yml`.
 
 ## License
 
