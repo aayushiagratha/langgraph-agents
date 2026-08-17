@@ -99,3 +99,7 @@ Both agents use `deepseek/deepseek-v4-flash` through OpenRouter in JSON mode, wi
 Each agent validates its own output before returning — the audit must produce a numeric `compliance_score`, the rewrite must produce non-empty `rewritten_content`. A malformed response fails the request rather than persisting junk.
 
 No credentials are committed. Everything sensitive is read from the environment.
+
+## License
+
+MIT.
